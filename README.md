@@ -2,8 +2,8 @@
 
 《CCCAT 犭犭猫》（Godot 单机游戏）隐私政策的公开网页。
 
-- 站点地址：<https://hazhimeiyou404.github.io/cccat-privacy/>
-- 源码仓库：<https://github.com/Hazhimeiyou404/cccat-privacy>
+- 站点地址：<https://hazhimeiyouyo404.github.io/cccat-privacy/>
+- 源码仓库：<https://github.com/Hazhimeiyouyo404/cccat-privacy>
 
 > **这个页面不只是 PDF 的搬运。** 源文件 `privacy-policy-template.pdf` 是一份**填了一半的通用手游模板**：
 > 它声称会收集手机号与登录密码、实名认证收集身份证件号码、收集设备 ID 与 IP、有充值消费与广告 SDK。
@@ -78,7 +78,7 @@ GitHub Pages 从分支直接构建，**push 后自动生效，不需要手动点
 首次开启（只需一次）：
 
 1. 在 GitHub 上新建**公开**仓库 `cccat-privacy`（不要勾选 Add a README，否则要先 `git pull --rebase`）。
-2. 推送：`git remote add origin git@github.com:Hazhimeiyou404/cccat-privacy.git && git push -u origin main`
+2. 推送：`git remote add origin git@github.com:Hazhimeiyouyo404/cccat-privacy.git && git push -u origin main`
 3. 仓库 `Settings → Pages`：Source 选 `Deploy from a branch`，分支选 `main`，目录选 `/`。
 
 之后每次改动：改 `src/` 或 `config/` → 跑生成与校验 → `git push`，一两分钟后自动更新。

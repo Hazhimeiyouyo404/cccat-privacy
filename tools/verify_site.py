@@ -20,8 +20,8 @@
 而不是见到失败就重跑生成器——那等于让校验自己判自己合格。
 """
 
-import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -248,6 +248,43 @@ def check_repo_guards(config: dict) -> list:
     return lines
 
 
+def check_url_consistency(config: dict, index_html: str) -> list:
+    """断言配置里的仓库地址/站点地址与 git remote 指向同一个账号。
+
+    这条守卫来自一次真实事故：GitHub 用户名是 Hazhimeiyouyo404（16 字符），
+    我把它误抄成 Hazhimeiyou404（漏掉中间一节 "yo"，14 字符），于是 remote
+    指向一个不存在的仓库、页面页脚也印着错地址，一路到 push 才暴露。
+    用户名这种一眼看不出差别的字符串，靠手工核对是不靠谱的——
+    让配置跟 remote 直接对账，才拦得住。
+    """
+    result = subprocess.run(["git", "-C", str(ROOT), "remote", "get-url", "origin"],
+                            capture_output=True, text=True)
+    if result.returncode != 0:
+        return ["  --  没有 origin remote，跳过地址一致性检查"]
+
+    remote_url = result.stdout.strip()
+    match = re.search(r"[:/]([^/:]+)/([^/]+?)(?:\.git)?$", remote_url)
+    if not match:
+        return [f"  --  origin 地址 {remote_url!r} 解析不出账号/仓库名，跳过"]
+    owner, repo = match.group(1), match.group(2)
+
+    problems = []
+    if f"/{owner}/{repo}" not in config["paths"]["repo_url"]:
+        problems.append(f"repo_url 与 remote 不一致："
+                        f"配置写 {config['paths']['repo_url']}，remote 指向 {owner}/{repo}")
+    if f"{owner.lower()}.github.io/{repo}" not in config["paths"]["site_url"].lower():
+        problems.append(f"site_url 与 remote 不一致："
+                        f"配置写 {config['paths']['site_url']}，按 remote 应为 "
+                        f"{owner.lower()}.github.io/{repo}")
+    if config["paths"]["repo_url"] not in index_html:
+        problems.append("index.html 页脚里没有出现配置声明的 repo_url（忘了重新生成？）")
+    if problems:
+        fail("\n".join(problems))
+    return [f"  OK  配置地址与 remote 一致：{owner}/{repo}",
+            f"      repo_url = {config['paths']['repo_url']}",
+            f"      site_url = {config['paths']['site_url']}"]
+
+
 def check_pdf(config: dict) -> list:
     """检查随站点下载的 PDF 与页面内容一致。
 
@@ -321,6 +358,10 @@ def main() -> int:
     print()
     print("— 层次 4：仓库守卫 —")
     report = check_repo_guards(config)
+    print("\n".join(report))
+    print()
+    print("— 地址一致性 —")
+    report = check_url_consistency(config, index_html)
     print("\n".join(report))
     print()
     print("— 附件一致性 —")
