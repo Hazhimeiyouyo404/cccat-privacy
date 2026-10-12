@@ -75,13 +75,40 @@ python tools/print_pdf.py         # 重新生成 assets/privacy-policy.pdf
 GitHub Pages 从分支直接构建，**push 后自动生效，不需要手动点「更新」**
 （这点与已停服的 Gitee Pages 不同——后者每次更新都要回网页点一下）。
 
-首次开启（只需一次）：
+站点：<https://hazhimeiyouyo404.github.io/cccat-privacy/>
 
-1. 在 GitHub 上新建**公开**仓库 `cccat-privacy`（不要勾选 Add a README，否则要先 `git pull --rebase`）。
-2. 推送：`git remote add origin git@github.com:Hazhimeiyouyo404/cccat-privacy.git && git push -u origin main`
-3. 仓库 `Settings → Pages`：Source 选 `Deploy from a branch`，分支选 `main`，目录选 `/`。
+### 首次开启踩到的坑
 
-之后每次改动：改 `src/` 或 `config/` → 跑生成与校验 → `git push`，一两分钟后自动更新。
+`Settings → Pages` 里**只显示「Add a domain」、根本不渲染 Source 区块**，
+即使仓库是公开的、`main` 分支有内容也一样。原因不是配置错误——
+**`has_pages` 还是 `false`，Pages 从未被开启过，而 Source 区块只在 Pages 已存在时才渲染**，
+于是形成一个「必须先开才能开」的死结。
+
+**解法：推一个 `gh-pages` 分支，GitHub 会自动开启 Pages**（实测：推完 `has_pages` 立刻变 `true`，
+约 20 秒后站点返回 200）。这是绕开那个死结最省事的办法，不需要任何令牌或网页操作。
+
+```bash
+git branch -f gh-pages main && git push origin gh-pages
+```
+
+### 部署分支的现状与建议
+
+因为上面的解法，站点目前**从 `gh-pages` 分支构建，而不是 `main`**——
+这意味着**推 `main` 不会更新站点**，改动必须同步到 `gh-pages`：
+
+```bash
+git push origin main:gh-pages     # 或：git push origin main && git push origin main:gh-pages
+```
+
+**更干净的做法**：Pages 既已开启，`Settings → Pages` 的 Source 下拉现在应该能用了。
+把 Branch 从 `gh-pages` 改成 `main`、目录 `/ (root)`、Save，
+之后 `gh-pages` 分支就可以删掉，只留单一事实来源：
+
+```bash
+git push origin --delete gh-pages && git branch -D gh-pages
+```
+
+之后就恢复成常规流程：改 `src/` 或 `config/` → 跑生成与校验 → `git push`，一两分钟后自动更新。
 
 ## 需要注意
 
