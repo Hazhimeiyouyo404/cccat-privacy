@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<meta name="robots" content="index, follow">
+<link rel="icon" type="image/png" href="{{favicon}}">
+<link rel="stylesheet" href="{{style_href}}">
+</head>
+<body>
+
+<header class="site-header">
+  <img class="title-art" src="{{header_image}}" alt="{{game_name}}" width="1280" height="720">
+  <h1>{{title}}</h1>
+  <p class="subtitle">{{game_name}} · 更新日期 {{updated}} · 生效日期 {{effective}}</p>
+</header>
+
+<nav class="toc" aria-label="目录">
+  <h2>本隐私政策将帮助您了解以下内容</h2>
+  <!-- 用 <ul> 而不是 <ol>：条目文字里已经带了「一、」「二、」的章号，
+       交给 <ol> 自动编号会渲染成「1. 一、我们如何收集…」这样的双重编号。 -->
+  <ul class="toc-list">
+{{toc}}
+  </ul>
+</nav>
+
+<main id="policy-body">
+{{body}}
+</main>
+
+<footer class="site-footer">
+  <h2>如何联系我们</h2>
+  <p>{{contact_name}}<br>{{contact_address}}<br>
+     联系邮箱：<a href="mailto:{{contact_email}}">{{contact_email}}</a></p>
+  <p><a class="pdf-download" href="{{pdf_asset}}" download>下载本政策的 PDF 版本</a></p>
+  <p class="repo">本站源码：<a href="{{repo_url}}" rel="noopener">{{repo_url}}</a></p>
+</footer>
+
+</body>
+</html>

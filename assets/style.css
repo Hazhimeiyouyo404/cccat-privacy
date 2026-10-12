@@ -1,0 +1,182 @@
+/* 《CCCAT 犭犭猫》隐私政策 —— 样式表
+   零依赖：不引入任何 CDN、web font 或 JS，页面可离线从 file:// 打开。
+   中文长文排版：正文宽度约 34 个汉字/行，行高 1.9，两端对齐。 */
+
+:root {
+  /* 字体栈里简中字体**必须排在 sans-serif 之前**。
+     游戏名里的「犭」是 U+72AD（康熙部首），它在 GB2312/GBK/GB18030 里有，
+     但**不在** Big5 与 Shift_JIS 里。若 sans-serif 先被解析到日文字体
+     （ja-JP locale 的 Windows 会这样），这个字就会显示成豆腐块。
+     跨平台字形差异（YaHei 与 PingFang 的反犬旁写法略有不同）是正常的，不要「修」。 */
+  --cjk-font: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Hiragino Sans GB",
+              "Source Han Sans SC", "Noto Sans CJK SC", "Noto Sans SC",
+              "WenQuanYi Micro Hei", "SimSun", "宋体", sans-serif;
+  --measure: 34em;
+  --line-height: 1.9;
+  --ink: #1a1a1a;
+  --ink-soft: #555;
+  --rule: #d8d8d8;
+  --accent: #1f6feb;
+  --bg-soft: #fafafa;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+  max-width: var(--measure);
+  font-family: var(--cjk-font);
+  font-size: clamp(16px, 1rem + 0.2vw, 18px);
+  line-height: var(--line-height);
+  color: var(--ink);
+  background: #fff;
+  text-align: justify;
+  text-justify: inter-ideograph;   /* 中文本地化的两端对齐 */
+  overflow-wrap: break-word;
+  word-break: normal;              /* 不要 break-all：会把中文拆得很难读 */
+}
+
+/* ——— 页眉 ——— */
+.site-header { text-align: center; margin-bottom: 2rem; }
+
+.title-art {
+  display: block;
+  width: 100%;
+  max-width: 22em;
+  height: auto;
+  margin: 0 auto 1rem;
+  image-rendering: pixelated;      /* 像素风标题图不要被平滑插值糊掉 */
+}
+
+.site-header h1 {
+  font-size: 1.5rem;
+  line-height: 1.4;
+  margin: 0 0 0.5rem;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* ——— 目录 ——— */
+.toc {
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 1rem 1.25rem 1rem 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.toc h2 {
+  font-size: 1rem;
+  margin: 0 0 0.6rem;
+  padding: 0;
+  border: none;
+}
+
+/* 关掉 list-style：条目文字自带「一、」章号，再加项目符号会重复 */
+.toc-list { margin: 0; padding-left: 0; list-style: none; }
+
+.toc li { margin: 0.15rem 0; }
+
+.toc a { color: var(--accent); }
+
+/* ——— 正文 ——— */
+main h2 {
+  font-size: 1.25rem;
+  line-height: 1.4;
+  margin: 2.5rem 0 0.8rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid var(--rule);
+  text-align: left;
+  scroll-margin-top: 1rem;         /* 锚点跳转时不要贴着视口顶边 */
+}
+
+main h3 {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  margin: 1.6rem 0 0.5rem;
+  text-align: left;
+}
+
+p { margin: 0 0 1em; }
+
+p.dates {
+  margin: 1.5rem 0;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* 列表项保留原文自带的编号字面量（`1.`、`(1)`、`⚫`），
+   所以关掉 list-style 并给悬挂缩进，避免出现「双重编号」。 */
+ul.plain {
+  list-style: none;
+  margin: 0 0 1em;
+  padding-left: 1.6em;
+}
+
+ul.plain > li {
+  margin: 0.35em 0;
+  text-indent: -1.6em;             /* 悬挂缩进：换行后与首行文字对齐 */
+}
+
+/* ——— 页脚 ——— */
+.site-footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.site-footer h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.6rem;
+  border: none;
+  padding: 0;
+}
+
+.site-footer a { color: var(--accent); }
+
+.pdf-download {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.5em 1em;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.repo { font-size: 0.85rem; }
+
+/* ——— 宽屏 ——— */
+@media (min-width: 40em) {
+  body { padding: 2.5rem 2rem 5rem; }
+}
+
+/* ——— 打印 / 导出 PDF ——— */
+/* 打印时隐藏目录：纸面上目录的锚点链接没有意义，且会占掉首页。
+   注意 text_content() 不含 CSS 生成内容，所以这里的 ::after 不会污染校验。 */
+@media print {
+  .toc { display: none; }
+  body {
+    max-width: none;
+    font-size: 11pt;
+    line-height: 1.6;
+    padding: 0;
+    text-align: justify;
+  }
+  .title-art { max-width: 12em; }
+  a { color: #000; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.85em; }
+  h2 { page-break-after: avoid; }
+  h3 { page-break-after: avoid; }
+  .site-footer { page-break-before: avoid; }
+}

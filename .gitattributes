@@ -1,0 +1,6 @@
+# 文本文件统一用 LF 提交，避免在 Windows 上产出 CRLF 污染 diff
+* text=auto eol=lf
+
+# 二进制文件显式声明，防止 eol=lf 破坏文件
+*.pdf  binary
+*.png  binary

@@ -1,0 +1,17 @@
+# 构建中间产物（正文真源在 src/，生成物只有 index.html）
+build/
+
+# Python 字节码缓存
+__pycache__/
+*.pyc
+
+# 大体积二进制：严禁入库
+# 源发布目录里有 110MB 的 CCCAT.exe 与 3.2MB 的演示视频，
+# 一旦误提交进历史，即使随后删除也仍留在 git 对象库里，只能靠 git filter-repo 清理。
+*.exe
+*.mp4
+
+# 系统杂项
+Thumbs.db
+desktop.ini
+.DS_Store
