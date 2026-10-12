@@ -77,38 +77,31 @@ GitHub Pages 从分支直接构建，**push 后自动生效，不需要手动点
 
 站点：<https://hazhimeiyouyo404.github.io/cccat-privacy/>
 
-### 首次开启踩到的坑
+### 首次开启踩到的坑（已解决，留档备查）
 
 `Settings → Pages` 里**只显示「Add a domain」、根本不渲染 Source 区块**，
 即使仓库是公开的、`main` 分支有内容也一样。原因不是配置错误——
 **`has_pages` 还是 `false`，Pages 从未被开启过，而 Source 区块只在 Pages 已存在时才渲染**，
 于是形成一个「必须先开才能开」的死结。
 
-**解法：推一个 `gh-pages` 分支，GitHub 会自动开启 Pages**（实测：推完 `has_pages` 立刻变 `true`，
-约 20 秒后站点返回 200）。这是绕开那个死结最省事的办法，不需要任何令牌或网页操作。
+**当时的解法**：推一个 `gh-pages` 分支，GitHub 会自动开启 Pages
+（实测推完 `has_pages` 立刻变 `true`，约 20 秒后站点返回 200）——不需要任何令牌或网页操作。
 
 ```bash
 git branch -f gh-pages main && git push origin gh-pages
 ```
 
-### 部署分支的现状与建议
-
-因为上面的解法，站点目前**从 `gh-pages` 分支构建，而不是 `main`**——
-这意味着**推 `main` 不会更新站点**，改动必须同步到 `gh-pages`：
+开启后立即用 API 把部署分支改回 `main` 并删掉临时分支，现在只留单一事实来源：
 
 ```bash
-git push origin main:gh-pages     # 或：git push origin main && git push origin main:gh-pages
-```
-
-**更干净的做法**：Pages 既已开启，`Settings → Pages` 的 Source 下拉现在应该能用了。
-把 Branch 从 `gh-pages` 改成 `main`、目录 `/ (root)`、Save，
-之后 `gh-pages` 分支就可以删掉，只留单一事实来源：
-
-```bash
+gh api -X PUT repos/Hazhimeiyouyo404/cccat-privacy/pages \
+       -f "source[branch]=main" -f "source[path]=/"
 git push origin --delete gh-pages && git branch -D gh-pages
 ```
 
-之后就恢复成常规流程：改 `src/` 或 `config/` → 跑生成与校验 → `git push`，一两分钟后自动更新。
+> 若日后又遇到「Pages 面板不渲染 Source」，这套办法可以再来一次。
+> 注意 `gh api user` 在这台机器上**不要**加 `HTTPS_PROXY`（加了反而 `EOF`），
+> 而 `gh auth status` 会误报 token 失效——以 `gh api user` 的实际返回为准。
 
 ## 需要注意
 
