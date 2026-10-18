@@ -191,7 +191,7 @@ def check_invariants(index_html: str, config: dict) -> list:
         fail(f'<meta charset="utf-8"> 的位置是 {position}，必须落在前 {limit} 字节内')
     lines.append(f"  OK  charset 声明位于第 {position} 字节（< {limit}）")
 
-    # 「犭」只应成对出现在游戏名里：任何零星的 犭 都说明有字被改坏
+    # 游戏名统一为 CCCAT 后已不含「犭」，页面上任何零星的 犭 都说明有字被改坏
     radical = index_html.count("犭")
     name = index_html.count("犭犭猫")
     if radical != name * 2:
@@ -199,9 +199,9 @@ def check_invariants(index_html: str, config: dict) -> list:
              f"存在不成对的 犭，说明游戏名被改坏")
     lines.append(f"  OK  「犭」{radical} 次全部成对出现在游戏名中（{name} 处）")
 
-    # 正文里的游戏名次数（配置期望值）
+    # 正文里的游戏名次数（配置期望值）；名字取自配置，不在这里写死
     body_text = text_of_element(element_by_id(index_html, "policy-body"))
-    body_names = body_text.count("犭犭猫")
+    body_names = body_text.count(config["meta"]["game_name"])
     expected_names = invariants.get("body_name_occurrences")
     if expected_names is not None and body_names != expected_names:
         fail(f"正文里游戏名出现 {body_names} 次，期望 {expected_names} 次")
@@ -306,8 +306,8 @@ def check_pdf(config: dict) -> list:
             fail(f"随站点分发的 PDF 里仍含 {forbidden!r}——它可能是未改写的源模板")
     if config["contact"]["email"].replace(" ", "") not in text:
         fail("随站点分发的 PDF 里找不到联系邮箱")
-    if "CCCAT犭犭猫" not in text:
-        fail("随站点分发的 PDF 里找不到游戏名")
+    if nospace(config["meta"]["game_name"]) not in text:
+        fail(f"随站点分发的 PDF 里找不到游戏名 {config['meta']['game_name']!r}")
     return [f"  OK  PDF 与页面一致：无占位符、无手机号、含邮箱与游戏名"
             f"（{PDF_PATH.stat().st_size} 字节）"]
 
